@@ -1,6 +1,9 @@
+import java.text.DecimalFormat;
+
 import static javax.swing.JOptionPane.*;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
+import static java.lang.Double.parseDouble;
 
 public class Util {
 
@@ -20,6 +23,9 @@ public class Util {
                 switch(opcao) {
                     case 1:
                         menuAdministrador();
+                        break;
+                    case 2:
+                        menuUsuario();
                         break;
                 }
             }
@@ -43,9 +49,25 @@ public class Util {
                     case 1:
                         emitirBilhete();
                         break;
+                    case 2:
+                        listarBilhetes();
+                        break;
                 }
             }
         } while(opcao != 4);
+    }
+
+    private  void listarBilhetes() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        String aux = "";
+        for(int i = 0; i < index; i++) {
+            aux += "Número do bilhete: " + bilhete[i].numero + "\n";
+            aux += "Nome do usuário: " + bilhete[i].usuario.nome + "\n";
+            aux += "Saldo R$ " + df.format(bilhete[i].consultarSaldo()) + "\n";
+            aux += "Tipo de tarifa (perfil): " + bilhete[i].usuario.tipoTarifa + "\n";
+            aux += "------------------------------------------\n";
+        }
+        showMessageDialog(null, aux);
     }
 
     private void emitirBilhete() {
@@ -60,5 +82,63 @@ public class Util {
             bilhete[index] = new BilheteUnico(new Usuario(nome, cpf, perfil));
             index++;
         }
+    }
+
+    private void menuUsuario() {
+        int opcao;
+        String menu = "1. Consultar bilhete\n2. Carregar bilhete\n3. Passar na catraca\n4. Sair";
+        do {
+            opcao = parseInt(showInputDialog(menu));
+            if(opcao < 1 || opcao > 4) {
+                showMessageDialog(null, "Opção inválida");
+            }
+            else {
+                switch(opcao) {
+                    case 1:
+                        consultarSaldo();
+                        break;
+                    case 2:
+                        carregarBilhete();
+                        break;
+                    case 3:
+                        passarNaCatraca();
+                        break;
+                }
+            }
+        } while(opcao != 4);
+    }
+
+    private void consultarSaldo() {
+        int posicao = pesquisar();
+        if(posicao != -1) {
+            showMessageDialog(null, bilhete[posicao].consultarSaldo());
+        }
+    }
+
+    private void carregarBilhete() {
+        int posicao = pesquisar();
+        double valor;
+        if(posicao != -1) {
+            valor = parseDouble(showInputDialog("Valor da recarga"));
+            bilhete[posicao].carregar(valor);
+        }
+    }
+
+    private void passarNaCatraca() {
+        int posicao = pesquisar();
+        if(posicao != 1) {
+            bilhete[posicao].passarNaCatraca();
+        }
+    }
+
+    private int pesquisar() {
+        long cpf = parseLong(showInputDialog("CPF"));
+        for(int i = 0; i < index; i++) {
+            if(bilhete[i].usuario.cpf == cpf) {
+                return i;
+            }
+        }
+        showMessageDialog(null, cpf + " não encontrado");
+        return -1;
     }
 }
