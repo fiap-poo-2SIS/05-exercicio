@@ -7,7 +7,7 @@ import static java.lang.Double.parseDouble;
 
 public class Util {
 
-    private BilheteUnico[] bilhete = new BilheteUnico[5];
+    private BilheteUnico[] bilhete = new BilheteUnico[3];
     private int index = 0;
 
     public void menuPrincipal() {
@@ -52,9 +52,24 @@ public class Util {
                     case 2:
                         listarBilhetes();
                         break;
+                    case 3:
+                        removerBilhete();
+                        break;
                 }
             }
         } while(opcao != 4);
+    }
+
+    private void removerBilhete() {
+        int posicao = pesquisar();
+        int resposta;
+        if(posicao != -1) {
+            resposta = showConfirmDialog(null, "Tem certeza que deseja remover?");
+            if(resposta == YES_OPTION) {
+                bilhete[posicao] = bilhete[index-1];
+                index--;
+            }
+        }
     }
 
     private  void listarBilhetes() {
